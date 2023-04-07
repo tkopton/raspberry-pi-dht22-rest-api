@@ -15,11 +15,8 @@ sensor_name2 = 'Sensor-DC-Room2'
 sensor_id2 = 2
 gpio_pin2 = 22
 
-last_measurement1 = (None, None)
-last_measurement_time1 = None
-
-last_measurement2 = (None, None)
-last_measurement_time2 = None
+last_measurement = (None, None)
+last_measurement_time = None
 
 debug_mode = False
 debug_measurement = (22.7, 32)
@@ -27,11 +24,13 @@ debug_measurement = (22.7, 32)
 # http://flask.pocoo.org/snippets/133/
 def flaskrun(app,
                   default_host='127.0.0.1', 
-                  default_port='5000', 
-                  default_sensor_name='Sensor',
-                  default_gpio_pin=4):
+                  default_port='5000'):
     global sensor_name1
     global gpio_pin1
+    global sensor_id1
+    global sensor_name2
+    global gpio_pin2
+    global sensor_id2
     global debug_mode
 
     parser = optparse.OptionParser()
@@ -43,22 +42,11 @@ def flaskrun(app,
                       help='Port for the Flask app ' + \
                            '[default %s]' % default_port,
                       default=default_port)
-    parser.add_option('-N', '--sensor-name',
-                      help='The name of the sensor being read for measurements' + \
-                           '[default %s]' % default_sensor_name,
-                      default=default_sensor_name)
-    parser.add_option('-G', '--gpio-pin',
-                    help='The GPIO pin to which the sensor is connected' + \
-                            '[default %s' % default_gpio_pin,
-                            default=default_gpio_pin)
     parser.add_option('-d', '--debug',
                       action='store_true', dest='debug',
                       help=optparse.SUPPRESS_HELP)
 
     options, _ = parser.parse_args()
-
-    sensor_name1 = options.sensor_name
-    gpio_pin1 = options.gpio_pin
     debug_mode = options.debug
 
     app.run(debug=options.debug,
@@ -66,43 +54,54 @@ def flaskrun(app,
         port=int(options.port)
     )
 
-def get_measurement():
-    global last_measurement1
-    global last_measurement_time1
+def get_measurement(gpio_pin):
+    global last_measurement
+    global last_measurement_time
 
-    humidity1, temperature1 = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin1) if not debug_mode else debug_measurement
+    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     
-    last_measurement_time1 = datetime.datetime.now()
-    last_measurement1 = (humidity1, temperature1)
+    last_measurement_time = datetime.datetime.now()
+    last_measurement = (humidity, temperature)
 
-    return last_measurement1
+    return last_measurement
 
-@app.route('/api/v1/temperature', methods=['GET'])
-def get_temperature():
-    temperature = get_measurement()[1]
+@app.route('/api/v1/<sensorId>/temperature', methods=['GET'])
+def get_temperature(sensorId):
+    if sensorId == 1:
+        gpio = 4
+    else:
+        gpio = 22 
+    temperature = get_measurement(gpio)[1]
     return jsonify({
-        'name': sensor_name1, 
         'temperature': temperature, 
-        'timestamp': last_measurement_time1.isoformat()
+        'timestamp': last_measurement_time.isoformat()
     })
 
-@app.route('/api/v1/humidity', methods=['GET'])
-def get_humidity():
-    humidity = get_measurement()[0]
+
+@app.route('/api/v1/<sensorId>/humidity', methods=['GET'])
+def get_humidity(sensorId):
+    if sensorId == 1:
+            gpio = 4
+    else:
+        gpio = 22 
+    humidity = get_measurement(gpio)[0]
     return jsonify({
-        'name': sensor_name1, 
         'humidity': humidity, 
-        'timestamp': last_measurement_time1.isoformat()
+        'timestamp': last_measurement_time.isoformat()
     })
 
-@app.route('/api/v1/temperature+humidity', methods=['GET'])
-def get_temperature_and_humidity():
-    humidity, temperature = get_measurement()
+
+@app.route('/api/v1/<sensorId>/temperature+humidity', methods=['GET'])
+def get_temperature_and_humidity(sensorId):
+    if sensorId == 1:
+            gpio = 4
+    else:
+        gpio = 22 
+    humidity, temperature = get_measurement(gpio)
     return jsonify({
-        'name': sensor_name1, 
         'temperature': temperature,
         'humidity': humidity, 
-        'timestamp': last_measurement_time1.isoformat()
+        'timestamp': last_measurement_time.isoformat()
     })
     
 @app.route('/api/v1/sensors', methods=['GET'])
