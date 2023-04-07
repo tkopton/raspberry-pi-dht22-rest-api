@@ -8,10 +8,18 @@ from importlib import reload
 
 app = Flask(__name__)
 sensor_name1 = 'Sensor-DC-Room1'
+sensor_id1= 1
 gpio_pin1 = 4
+
+sensor_name2 = 'Sensor-DC-Room2'
+sensor_id2 = 2
+gpio_pin2 = 22
 
 last_measurement1 = (None, None)
 last_measurement_time1 = None
+
+last_measurement2 = (None, None)
+last_measurement_time2 = None
 
 debug_mode = False
 debug_measurement = (22.7, 32)
@@ -95,6 +103,21 @@ def get_temperature_and_humidity():
         'temperature': temperature,
         'humidity': humidity, 
         'timestamp': last_measurement_time1.isoformat()
+    })
+    
+@app.route('/api/v1/sensors', methods=['GET'])
+def get_sensors():
+    return jsonify({
+        "sensors": [
+            {
+                "id": sensor_id1,
+                "name": sensor_name1
+            },
+            {
+                "id": sensor_id2,
+                "name": sensor_name2
+            }
+        ]
     })
 
 if __name__ == '__main__':
