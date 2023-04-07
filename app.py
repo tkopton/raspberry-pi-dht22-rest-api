@@ -65,7 +65,7 @@ def get_measurement(gpio_pin):
 
     return last_measurement
 
-@app.route('/api/v1/<sensorId>/temperature', methods=['GET'])
+@app.route('/api/v1/<int:sensorId>/temperature', methods=['GET'])
 def get_temperature(sensorId):
     if sensorId == 1:
         gpio = 4
@@ -78,10 +78,10 @@ def get_temperature(sensorId):
     })
 
 
-@app.route('/api/v1/<sensorId>/humidity', methods=['GET'])
+@app.route('/api/v1/<int:sensorId>/humidity', methods=['GET'])
 def get_humidity(sensorId):
     if sensorId == 1:
-            gpio = 4
+        gpio = 4
     else:
         gpio = 22 
     humidity = get_measurement(gpio)[0]
@@ -91,10 +91,10 @@ def get_humidity(sensorId):
     })
 
 
-@app.route('/api/v1/<sensorId>/temperature+humidity', methods=['GET'])
+@app.route('/api/v1/<int:sensorId>/temperature+humidity', methods=['GET'])
 def get_temperature_and_humidity(sensorId):
     if sensorId == 1:
-            gpio = 4
+        gpio = 4
     else:
         gpio = 22 
     humidity, temperature = get_measurement(gpio)
