@@ -4,13 +4,14 @@ import optparse
 import datetime
 import Adafruit_DHT
 from flask import Flask, jsonify
+from importlib import reload
 
 app = Flask(__name__)
-sensor_name = 'Sensor'
-gpio_pin = 4
+sensor_name1 = 'Sensor-DC-Room1'
+gpio_pin1 = 4
 
-last_measurement = (None, None)
-last_measurement_time = None
+last_measurement1 = (None, None)
+last_measurement_time1 = None
 
 debug_mode = False
 debug_measurement = (22.7, 32)
@@ -21,8 +22,8 @@ def flaskrun(app,
                   default_port='5000', 
                   default_sensor_name='Sensor',
                   default_gpio_pin=4):
-    global sensor_name
-    global gpio_pin
+    global sensor_name1
+    global gpio_pin1
     global debug_mode
 
     parser = optparse.OptionParser()
@@ -48,8 +49,8 @@ def flaskrun(app,
 
     options, _ = parser.parse_args()
 
-    sensor_name = options.sensor_name
-    gpio_pin = options.gpio_pin
+    sensor_name1 = options.sensor_name
+    gpio_pin1 = options.gpio_pin
     debug_mode = options.debug
 
     app.run(debug=options.debug,
@@ -58,46 +59,44 @@ def flaskrun(app,
     )
 
 def get_measurement():
-    global last_measurement
-    global last_measurement_time
+    global last_measurement1
+    global last_measurement_time1
 
-    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
+    humidity1, temperature1 = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin1) if not debug_mode else debug_measurement
     
-    last_measurement_time = datetime.datetime.now()
-    last_measurement = (humidity, temperature)
+    last_measurement_time1 = datetime.datetime.now()
+    last_measurement1 = (humidity1, temperature1)
 
-    return last_measurement
+    return last_measurement1
 
 @app.route('/api/v1/temperature', methods=['GET'])
 def get_temperature():
     temperature = get_measurement()[1]
     return jsonify({
-        'name': sensor_name, 
+        'name': sensor_name1, 
         'temperature': temperature, 
-        'timestamp': last_measurement_time.isoformat()
+        'timestamp': last_measurement_time1.isoformat()
     })
 
 @app.route('/api/v1/humidity', methods=['GET'])
 def get_humidity():
     humidity = get_measurement()[0]
     return jsonify({
-        'name': sensor_name, 
+        'name': sensor_name1, 
         'humidity': humidity, 
-        'timestamp': last_measurement_time.isoformat()
+        'timestamp': last_measurement_time1.isoformat()
     })
 
 @app.route('/api/v1/temperature+humidity', methods=['GET'])
 def get_temperature_and_humidity():
     humidity, temperature = get_measurement()
     return jsonify({
-        'name': sensor_name, 
+        'name': sensor_name1, 
         'temperature': temperature,
         'humidity': humidity, 
-        'timestamp': last_measurement_time.isoformat()
+        'timestamp': last_measurement_time1.isoformat()
     })
 
 if __name__ == '__main__':
     reload(sys)
-    sys.setdefaultencoding('utf-8')
-
     flaskrun(app)
