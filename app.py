@@ -13,7 +13,7 @@ gpio_pin1 = 4
 
 sensor_name2 = 'Sensor-DC-Room2'
 sensor_id2 = 2
-gpio_pin2 = 22
+gpio_pin2 = 4
 
 last_measurement = (None, None)
 last_measurement_time = None
@@ -62,7 +62,7 @@ def get_measurement(gpio_pin):
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     else:
         humidity, temperature = Adafruit_DHT.read_retry(
-            Adafruit_DHT.DHT22, 4) if not debug_mode else debug_measurement
+            Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     
     last_measurement_time = datetime.datetime.now()
     last_measurement = (humidity-1, temperature-1)
@@ -74,7 +74,7 @@ def get_temperature(sensorId):
     if sensorId == 1:
         gpio = 4
     else:
-        gpio = 22 
+        gpio = 4 
     temperature = get_measurement(gpio)[1]
     return jsonify({
         'temperature': temperature, 
@@ -87,7 +87,7 @@ def get_humidity(sensorId):
     if sensorId == 1:
         gpio = 4
     else:
-        gpio = 22 
+        gpio = 4
     humidity = get_measurement(gpio)[0]
     return jsonify({
         'humidity': humidity, 
@@ -100,7 +100,7 @@ def get_temperature_and_humidity(sensorId):
     if sensorId == 1:
         gpio = 4
     else:
-        gpio = 22 
+        gpio = 4 
     humidity, temperature = get_measurement(gpio)
     return jsonify({
         'temperature': temperature,
