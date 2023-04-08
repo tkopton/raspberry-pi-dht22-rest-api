@@ -62,7 +62,7 @@ def get_measurement(gpio_pin):
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     else:
         humidity, temperature = Adafruit_DHT.read_retry(
-            Adafruit_DHT.DHT11, gpio_pin) if not debug_mode else debug_measurement
+            Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     
     last_measurement_time = datetime.datetime.now()
     last_measurement = (humidity-1, temperature-1)
@@ -81,7 +81,6 @@ def get_temperature(sensorId):
         'timestamp': last_measurement_time.isoformat()
     })
 
-
 @app.route('/api/v1/<int:sensorId>/humidity', methods=['GET'])
 def get_humidity(sensorId):
     if sensorId == 1:
@@ -94,13 +93,12 @@ def get_humidity(sensorId):
         'timestamp': last_measurement_time.isoformat()
     })
 
-
 @app.route('/api/v1/<int:sensorId>/temperature+humidity', methods=['GET'])
 def get_temperature_and_humidity(sensorId):
     if sensorId == 1:
         gpio = 4
     else:
-        gpio = 22 
+        gpio = 4 
     humidity, temperature = get_measurement(gpio)
     return jsonify({
         'temperature': temperature,
