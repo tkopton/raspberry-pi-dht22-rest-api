@@ -7,11 +7,11 @@ from flask import Flask, jsonify
 from importlib import reload
 
 app = Flask(__name__)
-sensor_name1 = 'Sensor-DC-Room1'
+sensor_name1 = 'Sensor-Rack01'
 sensor_id1= 1
 gpio_pin1 = 4
 
-sensor_name2 = 'Sensor-DC-Room2'
+sensor_name2 = 'Sensor-Rack02'
 sensor_id2 = 2
 gpio_pin2 = 4
 
@@ -101,6 +101,7 @@ def get_temperature_and_humidity(sensorId):
         gpio = 4
     else:
         gpio = 4 
+    print(gpio)
     humidity, temperature = get_measurement(gpio)
     return jsonify({
         'temperature': temperature,
