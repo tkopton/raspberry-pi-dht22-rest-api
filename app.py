@@ -78,7 +78,8 @@ def get_temperature(sensorId):
     temperature = get_measurement(gpio)[1]
     return jsonify({
         'temperature': temperature, 
-        'timestamp': last_measurement_time.isoformat()
+        'timestamp': last_measurement_time.isoformat(),
+        'id': sensorId
     })
 
 @app.route('/api/v1/<int:sensorId>/humidity', methods=['GET'])
@@ -90,7 +91,8 @@ def get_humidity(sensorId):
     humidity = get_measurement(gpio)[0]
     return jsonify({
         'humidity': humidity, 
-        'timestamp': last_measurement_time.isoformat()
+        'timestamp': last_measurement_time.isoformat(),
+        'id': sensorId
     })
 
 @app.route('/api/v1/<int:sensorId>/temperature+humidity', methods=['GET'])
@@ -103,7 +105,8 @@ def get_temperature_and_humidity(sensorId):
     return jsonify({
         'temperature': temperature,
         'humidity': humidity, 
-        'timestamp': last_measurement_time.isoformat()
+        'timestamp': last_measurement_time.isoformat(),
+        'id': sensorId
     })
     
 @app.route('/api/v1/sensors', methods=['GET'])
