@@ -122,7 +122,7 @@ def get_sensors():
     })
 
 @app.route('/api/v1/systeminfo', methods=['GET'])
-def get_sensors():
+def get_systeminfo():
     return jsonify({
         "System name": "Environment 01",
         "System Id": "E01" 
