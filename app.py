@@ -121,6 +121,13 @@ def get_sensors():
         ]
     })
 
+@app.route('/api/v1/systeminfo', methods=['GET'])
+def get_sensors():
+    return jsonify({
+        "System name": "Environment 01",
+        "System Id": "E01" 
+    })
+    
 if __name__ == '__main__':
     reload(sys)
     flaskrun(app)
