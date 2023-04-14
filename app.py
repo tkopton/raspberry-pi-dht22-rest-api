@@ -7,11 +7,11 @@ from flask import Flask, jsonify
 from importlib import reload
 
 app = Flask(__name__)
-sensor_name1 = 'Sensor-Rack01'
+sensor_name1 = 'Sensor-Rack01-Top'
 sensor_id1= 1
 gpio_pin1 = 4
 
-sensor_name2 = 'Sensor-Rack02'
+sensor_name2 = 'Sensor-Rack02-Bottom'
 sensor_id2 = 2
 gpio_pin2 = 4
 
@@ -57,69 +57,32 @@ def flaskrun(app,
 def get_measurement(gpio_pin):
     global last_measurement
     global last_measurement_time
-
-    if gpio_pin == 4:
-        humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
-    else:
-        humidity, temperature = Adafruit_DHT.read_retry(
-            Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     
+    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, gpio_pin) if not debug_mode else debug_measurement
     last_measurement_time = datetime.datetime.now()
-    last_measurement = (humidity-1, temperature-1)
+    last_measurement = (humidity, temperature)
 
     return last_measurement
-
-@app.route('/api/v1/<int:sensorId>/temperature', methods=['GET'])
-def get_temperature(sensorId):
-    if sensorId == 1:
-        gpio = 4
-    else:
-        gpio = 4 
-    temperature = get_measurement(gpio)[1]
-    return jsonify({
-        'temperature': temperature, 
-        'timestamp': last_measurement_time.isoformat(),
-        'id': sensorId
-    })
-
-@app.route('/api/v1/<int:sensorId>/humidity', methods=['GET'])
-def get_humidity(sensorId):
-    if sensorId == 1:
-        gpio = 4
-    else:
-        gpio = 4
-    humidity = get_measurement(gpio)[0]
-    return jsonify({
-        'humidity': humidity, 
-        'timestamp': last_measurement_time.isoformat(),
-        'id': sensorId
-    })
-
-@app.route('/api/v1/<int:sensorId>/temperature+humidity', methods=['GET'])
-def get_temperature_and_humidity(sensorId):
-    if sensorId == 1:
-        gpio = 4
-    else:
-        gpio = 4 
-    humidity, temperature = get_measurement(gpio)
-    return jsonify({
-        'temperature': temperature,
-        'humidity': humidity, 
-        'timestamp': last_measurement_time.isoformat(),
-        'id': sensorId
-    })
     
 @app.route('/api/v1/sensors', methods=['GET'])
 def get_sensors():
+    humidity1, temperature1 = get_measurement(gpio_pin1)
+    humidity2, temperature2 = get_measurement(gpio_pin2)
     return jsonify({
         "sensors": [
             {
                 "id": sensor_id1,
-                "name": sensor_name1
+                "name": sensor_name1,
+                'temperature': temperature1,
+                'humidity': humidity1,
+                'timestamp': last_measurement_time.isoformat(),
             },
             {
                 "id": sensor_id2,
-                "name": sensor_name2
+                "name": sensor_name2,
+                'temperature': temperature2,
+                'humidity': humidity2,
+                'timestamp': last_measurement_time.isoformat(),
             }
         ]
     })
