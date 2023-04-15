@@ -13,7 +13,7 @@ gpio_pin1 = 4
 
 sensor_name2 = 'Sensor-Rack02-Bottom'
 sensor_id2 = 2
-gpio_pin2 = 4
+gpio_pin2 = 22
 
 last_measurement = (None, None)
 last_measurement_time = None
@@ -22,9 +22,7 @@ debug_mode = False
 debug_measurement = (22.7, 32)
 
 # http://flask.pocoo.org/snippets/133/
-def flaskrun(app,
-                  default_host='127.0.0.1', 
-                  default_port='5000'):
+def flaskrun(app, default_host='127.0.0.1', default_port='5000'):
     global sensor_name1
     global gpio_pin1
     global sensor_id1
@@ -34,17 +32,9 @@ def flaskrun(app,
     global debug_mode
 
     parser = optparse.OptionParser()
-    parser.add_option('-H', '--host',
-                      help='Hostname of the Flask app ' + \
-                           '[default %s]' % default_host,
-                      default=default_host)
-    parser.add_option('-P', '--port',
-                      help='Port for the Flask app ' + \
-                           '[default %s]' % default_port,
-                      default=default_port)
-    parser.add_option('-d', '--debug',
-                      action='store_true', dest='debug',
-                      help=optparse.SUPPRESS_HELP)
+    parser.add_option('-H', '--host', help='Hostname of the Flask app ' + '[default %s]' % default_host, default=default_host)
+    parser.add_option('-P', '--port', help='Port for the Flask app ' + '[default %s]' % default_port, default=default_port)
+    parser.add_option('-d', '--debug',action='store_true', dest='debug', help=optparse.SUPPRESS_HELP)
 
     options, _ = parser.parse_args()
     debug_mode = options.debug
