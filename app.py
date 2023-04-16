@@ -7,11 +7,11 @@ from flask import Flask, jsonify
 from importlib import reload
 
 app = Flask(__name__)
-sensor_name1 = 'Sensor-Rack01-Top'
+sensor_name1 = 'Rack01-Bottom'
 sensor_id1= 1
 gpio_pin1 = 4
 
-sensor_name2 = 'Sensor-Rack02-Bottom'
+sensor_name2 = 'Rack02-Top'
 sensor_id2 = 2
 gpio_pin2 = 22
 
